@@ -8,12 +8,12 @@ pub struct PrettyFormatter<'a> {
     /// The underlying serde_json pretty formatter
     formatter: serde_json::ser::PrettyFormatter<'a>,
     /// Configuration for the formatter
-    config: Config,
+    config: &'a Config,
 }
 
 impl<'a> PrettyFormatter<'a> {
     /// Creates a new PrettyFormatter with the specified configuration
-    pub fn with_config(config: Config) -> Self {
+    pub fn with_config(config: &'a Config) -> Self {
         PrettyFormatter {
             formatter: serde_json::ser::PrettyFormatter::new(),
             config,

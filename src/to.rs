@@ -16,7 +16,7 @@ use std::io::Write;
 /// let config = Config::default().set_bytes_hex().enable_hex_prefix();
 /// let json = to_string(&vec![1u8, 2u8, 3u8], &config).unwrap();
 /// ```
-pub fn to_string<T>(value: &T, config: Config) -> serde_json::Result<String>
+pub fn to_string<T>(value: &T, config: &Config) -> serde_json::Result<String>
 where
     T: ?Sized + serde::Serialize,
 {
@@ -34,7 +34,7 @@ where
 /// let config = Config::default().set_bytes_hex().enable_hex_prefix();
 /// let json = to_string_pretty(&vec![1u8, 2u8, 3u8], &config).unwrap();
 /// ```
-pub fn to_string_pretty<T>(value: &T, config: Config) -> serde_json::Result<String>
+pub fn to_string_pretty<T>(value: &T, config: &Config) -> serde_json::Result<String>
 where
     T: ?Sized + serde::Serialize,
 {
@@ -54,7 +54,7 @@ where
 /// let config = Config::default().set_bytes_hex().enable_hex_prefix();
 /// let json = to_vec(&vec![1u8, 2u8, 3u8], &config).unwrap();
 /// ```
-pub fn to_vec<T>(value: &T, config: Config) -> serde_json::Result<Vec<u8>>
+pub fn to_vec<T>(value: &T, config: &Config) -> serde_json::Result<Vec<u8>>
 where
     T: ?Sized + serde::Serialize,
 {
@@ -73,7 +73,7 @@ where
 /// let config = Config::default().set_bytes_hex().enable_hex_prefix();
 /// let json = to_vec_pretty(&vec![1u8, 2u8, 3u8], &config).unwrap();
 /// ```
-pub fn to_vec_pretty<T>(value: &T, config: Config) -> serde_json::Result<Vec<u8>>
+pub fn to_vec_pretty<T>(value: &T, config: &Config) -> serde_json::Result<Vec<u8>>
 where
     T: ?Sized + serde::Serialize,
 {
@@ -95,7 +95,7 @@ where
 /// let config = Config::default().set_bytes_hex().enable_hex_prefix();
 /// to_writer(&mut stdout(), &vec![1u8, 2u8, 3u8], &config).unwrap();
 /// ```
-pub fn to_writer<W, T>(writer: &mut W, value: &T, config: Config) -> serde_json::Result<()>
+pub fn to_writer<W, T>(writer: &mut W, value: &T, config: &Config) -> serde_json::Result<()>
 where
     W: ?Sized + Write,
     T: ?Sized + serde::Serialize,
@@ -116,7 +116,7 @@ where
 /// let config = Config::default().set_bytes_hex().enable_hex_prefix();
 /// to_writer_pretty(&mut stdout(), &vec![1u8, 2u8, 3u8], &config).unwrap();
 /// ```
-pub fn to_writer_pretty<W, T>(writer: &mut W, value: &T, config: Config) -> serde_json::Result<()>
+pub fn to_writer_pretty<W, T>(writer: &mut W, value: &T, config: &Config) -> serde_json::Result<()>
 where
     W: ?Sized + Write,
     T: ?Sized + serde::Serialize,
@@ -143,7 +143,7 @@ mod tests {
         };
 
         let config = Config::default().set_bytes_default();
-        let result = to_string(&test_data, config).unwrap();
+        let result = to_string(&test_data, &config).unwrap();
         println!("Bytes Default format: {}", result);
     }
 
@@ -160,7 +160,7 @@ mod tests {
         };
 
         let config = Config::default().set_bytes_hex().disable_hex_prefix();
-        let result = to_string(&test_data, config).unwrap();
+        let result = to_string(&test_data, &config).unwrap();
         println!("Bytes Hex format (no prefix): {}", result);
     }
 
@@ -177,7 +177,7 @@ mod tests {
         };
 
         let config = Config::default().set_bytes_hex().enable_hex_prefix();
-        let result = to_string(&test_data, config).unwrap();
+        let result = to_string(&test_data, &config).unwrap();
         println!("Bytes Hex format (with 0x prefix): {}", result);
     }
 
@@ -194,7 +194,7 @@ mod tests {
         };
 
         let config = Config::default().set_bytes_base64();
-        let result = to_string(&test_data, config).unwrap();
+        let result = to_string(&test_data, &config).unwrap();
         println!("Bytes Base64 format: {}", result);
     }
 
@@ -211,7 +211,7 @@ mod tests {
         };
 
         let config = Config::default().set_bytes_base64_url_safe();
-        let result = to_string(&test_data, config).unwrap();
+        let result = to_string(&test_data, &config).unwrap();
         println!("Bytes Base64 URL-safe format: {}", result);
     }
 
@@ -228,26 +228,26 @@ mod tests {
         println!("\n=== Testing empty bytes ===");
 
         let config_default = Config::default().set_bytes_default();
-        let result_default = to_string(&test_data, config_default).unwrap();
+        let result_default = to_string(&test_data, &config_default).unwrap();
         println!("Empty bytes Default format: {}", result_default);
 
         let config_hex = Config::default().set_bytes_hex().disable_hex_prefix();
-        let result_hex = to_string(&test_data, config_hex).unwrap();
+        let result_hex = to_string(&test_data, &config_hex).unwrap();
         println!("Empty bytes Hex format (no prefix): {}", result_hex);
 
         let config_hex_prefix = Config::default().set_bytes_hex().enable_hex_prefix();
-        let result_hex_prefix = to_string(&test_data, config_hex_prefix).unwrap();
+        let result_hex_prefix = to_string(&test_data, &config_hex_prefix).unwrap();
         println!(
             "Empty bytes Hex format (with prefix): {}",
             result_hex_prefix
         );
 
         let config_base64 = Config::default().set_bytes_base64();
-        let result_base64 = to_string(&test_data, config_base64).unwrap();
+        let result_base64 = to_string(&test_data, &config_base64).unwrap();
         println!("Empty bytes Base64 format: {}", result_base64);
 
         let config_base64_url = Config::default().set_bytes_base64_url_safe();
-        let result_base64_url = to_string(&test_data, config_base64_url).unwrap();
+        let result_base64_url = to_string(&test_data, &config_base64_url).unwrap();
         println!("Empty bytes Base64 URL-safe format: {}", result_base64_url);
     }
 
@@ -264,25 +264,25 @@ mod tests {
         println!("\n=== Testing single byte (0) ===");
 
         let config_default = Config::default().set_bytes_default();
-        let result_default = to_string(&test_data, config_default).unwrap();
+        let result_default = to_string(&test_data, &config_default).unwrap();
         println!("Single byte (0) Default format: {}", result_default);
 
         let config_hex_no_prefix = Config::default().set_bytes_hex().disable_hex_prefix();
-        let result_hex_no_prefix = to_string(&test_data, config_hex_no_prefix).unwrap();
+        let result_hex_no_prefix = to_string(&test_data, &config_hex_no_prefix).unwrap();
         println!(
             "Single byte (0) Hex format (no prefix): {}",
             result_hex_no_prefix
         );
 
         let config_hex_prefix = Config::default().set_bytes_hex().enable_hex_prefix();
-        let result_hex_prefix = to_string(&test_data, config_hex_prefix).unwrap();
+        let result_hex_prefix = to_string(&test_data, &config_hex_prefix).unwrap();
         println!(
             "Single byte (0) Hex format (with prefix): {}",
             result_hex_prefix
         );
 
         let config_base64 = Config::default().set_bytes_base64();
-        let result_base64 = to_string(&test_data, config_base64).unwrap();
+        let result_base64 = to_string(&test_data, &config_base64).unwrap();
         println!("Single byte (0) Base64 format: {}", result_base64);
     }
 
@@ -301,7 +301,7 @@ mod tests {
         println!("\n=== Testing large bytes (0-255) ===");
 
         let config_default = Config::default().set_bytes_default();
-        let result_default = to_string(&test_data, config_default).unwrap();
+        let result_default = to_string(&test_data, &config_default).unwrap();
         println!(
             "Large bytes Default format length: {}",
             result_default.len()
@@ -312,15 +312,15 @@ mod tests {
         );
 
         let config_hex = Config::default().set_bytes_hex().enable_hex_prefix();
-        let result_hex = to_string(&test_data, config_hex).unwrap();
+        let result_hex = to_string(&test_data, &config_hex).unwrap();
         println!("Large bytes Hex format (with prefix): {}", result_hex);
 
         let config_base64 = Config::default().set_bytes_base64();
-        let result_base64 = to_string(&test_data, config_base64).unwrap();
+        let result_base64 = to_string(&test_data, &config_base64).unwrap();
         println!("Large bytes Base64 format: {}", result_base64);
 
         let config_base64_url = Config::default().set_bytes_base64_url_safe();
-        let result_base64_url = to_string(&test_data, config_base64_url).unwrap();
+        let result_base64_url = to_string(&test_data, &config_base64_url).unwrap();
         println!("Large bytes Base64 URL-safe format: {}", result_base64_url);
     }
 
@@ -341,15 +341,15 @@ mod tests {
         println!("\n=== Testing bytes in struct ===");
 
         let config_default = Config::default().set_bytes_default();
-        let result_default = to_string(&test_data, config_default).unwrap();
+        let result_default = to_string(&test_data, &config_default).unwrap();
         println!("Struct with bytes Default format: {}", result_default);
 
         let config_hex = Config::default().set_bytes_hex().enable_hex_prefix();
-        let result_hex = to_string(&test_data, config_hex).unwrap();
+        let result_hex = to_string(&test_data, &config_hex).unwrap();
         println!("Struct with bytes Hex format (with prefix): {}", result_hex);
 
         let config_base64 = Config::default().set_bytes_base64();
-        let result_base64 = to_string(&test_data, config_base64).unwrap();
+        let result_base64 = to_string(&test_data, &config_base64).unwrap();
         println!("Struct with bytes Base64 format: {}", result_base64);
     }
 
@@ -378,15 +378,15 @@ mod tests {
         println!("\n=== Testing bytes in nested structure ===");
 
         let config_default = Config::default().set_bytes_default();
-        let result_default = to_string(&data, config_default).unwrap();
+        let result_default = to_string(&data, &config_default).unwrap();
         println!("Nested structure Default format: {}", result_default);
 
         let config_hex = Config::default().set_bytes_hex().enable_hex_prefix();
-        let result_hex = to_string(&data, config_hex).unwrap();
+        let result_hex = to_string(&data, &config_hex).unwrap();
         println!("Nested structure Hex format (with prefix): {}", result_hex);
 
         let config_base64 = Config::default().set_bytes_base64();
-        let result_base64 = to_string(&data, config_base64).unwrap();
+        let result_base64 = to_string(&data, &config_base64).unwrap();
         println!("Nested structure Base64 format: {}", result_base64);
     }
 
@@ -414,23 +414,23 @@ mod tests {
             println!("\n--- Testing: {} ---", description);
 
             let config_default = Config::default().set_bytes_default();
-            let result_default = to_string(&test_data, config_default).unwrap();
+            let result_default = to_string(&test_data, &config_default).unwrap();
             println!("Default: {}", result_default);
 
             let config_hex_no_prefix = Config::default().set_bytes_hex().disable_hex_prefix();
-            let result_hex_no_prefix = to_string(&test_data, config_hex_no_prefix).unwrap();
+            let result_hex_no_prefix = to_string(&test_data, &config_hex_no_prefix).unwrap();
             println!("Hex (no prefix): {}", result_hex_no_prefix);
 
             let config_hex_prefix = Config::default().set_bytes_hex().enable_hex_prefix();
-            let result_hex_prefix = to_string(&test_data, config_hex_prefix).unwrap();
+            let result_hex_prefix = to_string(&test_data, &config_hex_prefix).unwrap();
             println!("Hex (with prefix): {}", result_hex_prefix);
 
             let config_base64 = Config::default().set_bytes_base64();
-            let result_base64 = to_string(&test_data, config_base64).unwrap();
+            let result_base64 = to_string(&test_data, &config_base64).unwrap();
             println!("Base64: {}", result_base64);
 
             let config_base64_url = Config::default().set_bytes_base64_url_safe();
-            let result_base64_url = to_string(&test_data, config_base64_url).unwrap();
+            let result_base64_url = to_string(&test_data, &config_base64_url).unwrap();
             println!("Base64 URL-safe: {}", result_base64_url);
         }
     }
@@ -452,23 +452,23 @@ mod tests {
         );
 
         let config_default = Config::default().set_bytes_default();
-        let result_default = to_string(&test_data, config_default).unwrap();
+        let result_default = to_string(&test_data, &config_default).unwrap();
         println!("Default: {}", result_default);
 
         let config_hex_no_prefix = Config::default().set_bytes_hex().disable_hex_prefix();
-        let result_hex_no_prefix = to_string(&test_data, config_hex_no_prefix).unwrap();
+        let result_hex_no_prefix = to_string(&test_data, &config_hex_no_prefix).unwrap();
         println!("Hex (no prefix): {}", result_hex_no_prefix);
 
         let config_hex_prefix = Config::default().set_bytes_hex().enable_hex_prefix();
-        let result_hex_prefix = to_string(&test_data, config_hex_prefix).unwrap();
+        let result_hex_prefix = to_string(&test_data, &config_hex_prefix).unwrap();
         println!("Hex (with prefix): {}", result_hex_prefix);
 
         let config_base64 = Config::default().set_bytes_base64();
-        let result_base64 = to_string(&test_data, config_base64).unwrap();
+        let result_base64 = to_string(&test_data, &config_base64).unwrap();
         println!("Base64: {}", result_base64);
 
         let config_base64_url = Config::default().set_bytes_base64_url_safe();
-        let result_base64_url = to_string(&test_data, config_base64_url).unwrap();
+        let result_base64_url = to_string(&test_data, &config_base64_url).unwrap();
         println!("Base64 URL-safe: {}", result_base64_url);
     }
 
@@ -492,11 +492,11 @@ mod tests {
         println!("\n=== Testing multiple bytes fields ===");
 
         let config_hex = Config::default().set_bytes_hex().enable_hex_prefix();
-        let result_hex = to_string(&test_data, config_hex).unwrap();
+        let result_hex = to_string(&test_data, &config_hex).unwrap();
         println!("Multiple bytes fields Hex format: {}", result_hex);
 
         let config_base64 = Config::default().set_bytes_base64();
-        let result_base64 = to_string(&test_data, config_base64).unwrap();
+        let result_base64 = to_string(&test_data, &config_base64).unwrap();
         println!("Multiple bytes fields Base64 format: {}", result_base64);
     }
 }

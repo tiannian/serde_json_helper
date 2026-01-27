@@ -4,16 +4,16 @@ use crate::{Config, ser_bytes::ser_bytes};
 use std::io::Write;
 
 /// Compact formatter for JSON serialization
-pub struct CompactFormatter {
+pub struct CompactFormatter<'a> {
     /// The underlying serde_json compact formatter
     formatter: serde_json::ser::CompactFormatter,
     /// Configuration for the formatter
-    config: Config,
+    config: &'a Config,
 }
 
-impl CompactFormatter {
+impl<'a> CompactFormatter<'a> {
     /// Creates a new CompactFormatter with the specified configuration
-    pub fn with_config(config: Config) -> Self {
+    pub fn with_config(config: &'a Config) -> Self {
         CompactFormatter {
             formatter: serde_json::ser::CompactFormatter,
             config,
@@ -21,7 +21,7 @@ impl CompactFormatter {
     }
 }
 
-impl serde_json::ser::Formatter for CompactFormatter {
+impl<'a> serde_json::ser::Formatter for CompactFormatter<'a> {
     fn write_null<W>(&mut self, writer: &mut W) -> std::io::Result<()>
     where
         W: ?Sized + Write,

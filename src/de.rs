@@ -7,21 +7,21 @@ use serde_json::de::Read;
 use crate::de_bytes;
 
 /// A wrapper around `serde_json::Deserializer` that implements `Deserializer<'de>`
-pub struct Deserializer<R> {
+pub struct Deserializer<'a, R> {
     /// The internal `serde_json::Deserializer`
     pub inner: serde_json::de::Deserializer<R>,
     /// Configuration for deserialization
-    pub config: Config,
+    pub config: &'a Config,
 }
 
-impl<R> Deserializer<R> {
+impl<'a, R> Deserializer<'a, R> {
     /// Creates a new `Deserializer` from an internal `serde_json::Deserializer` with custom config
-    pub fn with_config(inner: serde_json::de::Deserializer<R>, config: Config) -> Self {
+    pub fn with_config(inner: serde_json::de::Deserializer<R>, config: &'a Config) -> Self {
         Deserializer { inner, config }
     }
 }
 
-impl<'de, R> serde::de::Deserializer<'de> for &mut Deserializer<R>
+impl<'de, R> serde::de::Deserializer<'de> for &mut Deserializer<'de, R>
 where
     R: Read<'de>,
 {
