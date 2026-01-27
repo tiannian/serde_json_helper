@@ -1,6 +1,6 @@
 // Compact formatter for JSON
 
-use crate::SerdeConfig;
+use crate::{serde_bytes, Config};
 use std::io::Write;
 
 /// Compact formatter for JSON serialization
@@ -8,17 +8,17 @@ pub struct CompactFormatter {
     /// The underlying serde_json compact formatter
     formatter: serde_json::ser::CompactFormatter,
     /// Configuration for the formatter
-    config: SerdeConfig,
+    config: Config,
 }
 
 impl CompactFormatter {
     /// Creates a new CompactFormatter with default configuration
     pub fn new() -> Self {
-        Self::with_config(SerdeConfig::default())
+        Self::with_config(Config::default())
     }
 
     /// Creates a new CompactFormatter with the specified configuration
-    pub fn with_config(config: SerdeConfig) -> Self {
+    pub fn with_config(config: Config) -> Self {
         CompactFormatter {
             formatter: serde_json::ser::CompactFormatter,
             config,
@@ -168,7 +168,7 @@ impl serde_json::ser::Formatter for CompactFormatter {
     where
         W: ?Sized + Write,
     {
-        self.formatter.write_byte_array(writer, value)
+        serde_bytes(writer, &mut self.formatter, &self.config, value)
     }
 
     fn begin_array<W>(&mut self, writer: &mut W) -> std::io::Result<()>

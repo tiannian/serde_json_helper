@@ -1,6 +1,6 @@
 // Pretty formatter for JSON
 
-use crate::SerdeConfig;
+use crate::{serde_bytes, Config};
 use std::io::Write;
 
 /// Pretty formatter for JSON serialization
@@ -8,17 +8,17 @@ pub struct PrettyFormatter<'a> {
     /// The underlying serde_json pretty formatter
     formatter: serde_json::ser::PrettyFormatter<'a>,
     /// Configuration for the formatter
-    config: SerdeConfig,
+    config: Config,
 }
 
 impl<'a> PrettyFormatter<'a> {
     /// Creates a new PrettyFormatter with default configuration
     pub fn new() -> Self {
-        Self::with_config(SerdeConfig::default())
+        Self::with_config(Config::default())
     }
 
     /// Creates a new PrettyFormatter with the specified configuration
-    pub fn with_config(config: SerdeConfig) -> Self {
+    pub fn with_config(config: Config) -> Self {
         PrettyFormatter {
             formatter: serde_json::ser::PrettyFormatter::new(),
             config,
@@ -168,7 +168,7 @@ impl<'a> serde_json::ser::Formatter for PrettyFormatter<'a> {
     where
         W: ?Sized + Write,
     {
-        self.formatter.write_byte_array(writer, value)
+        serde_bytes(writer, &mut self.formatter, &self.config, value)
     }
 
     fn begin_array<W>(&mut self, writer: &mut W) -> std::io::Result<()>
