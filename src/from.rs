@@ -1,85 +1,25 @@
-// Deserialization functions with configuration
-
-use crate::Config;
-use crate::de::Deserializer;
 use serde::Deserialize;
-use std::io::Read;
+use serde_json::{Result, de::Read};
 
-/// Deserializes a value from a JSON string with the given configuration.
-///
-/// # Example
-///
-/// ```
-/// use serde_json_helper::{from_str, Config};
-///
-/// #[derive(serde::Deserialize)]
-/// struct TestStruct {
-///     data: Vec<u8>,
-/// }
-///
-/// let config = Config::default().set_bytes_hex().enable_hex_prefix();
-/// let json = r#"{"data":"0x010203"}"#;
-/// let value: TestStruct = from_str(json, &config).unwrap();
-/// ```
-pub fn from_str<'de, T>(s: &'de str, config: &Config) -> serde_json::Result<T>
+use crate::{Config, de::Deserializer};
+
+fn from_trait<'de, R, T>(read: R, config: Config) -> Result<T>
 where
+    R: Read<'de>,
     T: Deserialize<'de>,
 {
-    let deserializer = serde_json::Deserializer::from_str(s);
-    let wrapper = Deserializer::with_config(deserializer, config.clone());
-    T::deserialize(wrapper)
+    let mut de = Deserializer::with_config(serde_json::Deserializer::new(read), config.clone());
+
+    let value = serde::de::Deserialize::deserialize(&mut de)?;
+
+    de.inner.end()?;
+    Ok(value)
 }
 
-/// Deserializes a value from a JSON byte slice with the given configuration.
-///
-/// # Example
-///
-/// ```
-/// use serde_json_helper::{from_slice, Config};
-///
-/// #[derive(serde::Deserialize)]
-/// struct TestStruct {
-///     data: Vec<u8>,
-/// }
-///
-/// let config = Config::default().set_bytes_hex().enable_hex_prefix();
-/// let json = br#"{"data":"0x010203"}"#;
-/// let value: TestStruct = from_slice(json, &config).unwrap();
-/// ```
-pub fn from_slice<'de, T>(v: &'de [u8], config: &Config) -> serde_json::Result<T>
+pub fn from_reader<R, T>(rdr: R, config: Config) -> Result<T>
 where
-    T: Deserialize<'de>,
+    R: std::io::Read,
+    T: serde::de::DeserializeOwned,
 {
-    let deserializer = serde_json::Deserializer::from_slice(v);
-    let wrapper = Deserializer::with_config(deserializer, config.clone());
-    T::deserialize(wrapper)
+    from_trait(serde_json::de::IoRead::new(rdr), config)
 }
-
-/// Deserializes a value from a JSON reader with the given configuration.
-///
-/// # Example
-///
-/// ```
-/// use serde_json_helper::{from_reader, Config};
-/// use std::io::Cursor;
-///
-/// #[derive(serde::Deserialize)]
-/// struct TestStruct {
-///     data: Vec<u8>,
-/// }
-///
-/// let config = Config::default().set_bytes_hex().enable_hex_prefix();
-/// let json = r#"{"data":"0x010203"}"#;
-/// let reader = Cursor::new(json.as_bytes());
-/// let value: TestStruct = from_reader(reader, &config).unwrap();
-/// ```
-pub fn from_reader<R, T>(rdr: R, config: &Config) -> serde_json::Result<T>
-where
-    R: Read,
-    T: for<'de> Deserialize<'de>,
-{
-    let deserializer = serde_json::Deserializer::from_reader(rdr);
-    let wrapper = Deserializer::with_config(deserializer, config.clone());
-    T::deserialize(wrapper)
-}
-

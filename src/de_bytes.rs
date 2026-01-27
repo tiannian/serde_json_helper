@@ -16,7 +16,7 @@ use serde_json::de::Read;
 ///
 /// Returns `Result<V::Value, serde_json::Error>` indicating success or failure
 pub(crate) fn de_bytes<'de, R, V>(
-    deserializer: serde_json::de::Deserializer<R>,
+    deserializer: &mut serde_json::de::Deserializer<R>,
     config: &Config,
     visitor: V,
 ) -> Result<V::Value, serde_json::Error>
@@ -34,7 +34,7 @@ where
 
 /// Deserializes bytes from a JSON array of numbers [1, 2, 3]
 pub(crate) fn de_bytes_array<'de, R, V>(
-    mut deserializer: serde_json::de::Deserializer<R>,
+    deserializer: &mut serde_json::de::Deserializer<R>,
     visitor: V,
 ) -> Result<V::Value, serde_json::Error>
 where
@@ -46,7 +46,7 @@ where
 
 /// Deserializes bytes from a hexadecimal string "0x1234..." or "1234..."
 pub(crate) fn de_bytes_hex<'de, R, V>(
-    mut deserializer: serde_json::de::Deserializer<R>,
+    deserializer: &mut serde_json::de::Deserializer<R>,
     _config: &Config,
     visitor: V,
 ) -> Result<V::Value, serde_json::Error>
@@ -99,7 +99,7 @@ where
 ///
 /// * `url_safe` - If true, uses URL-safe Base64 decoding, otherwise uses standard Base64
 pub(crate) fn de_bytes_base64<'de, R, V>(
-    mut deserializer: serde_json::de::Deserializer<R>,
+    deserializer: &mut serde_json::de::Deserializer<R>,
     url_safe: bool,
     visitor: V,
 ) -> Result<V::Value, serde_json::Error>
