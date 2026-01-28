@@ -163,7 +163,7 @@ mod tests {
 
         let config = Config::default().set_bytes_default();
         let result = to_string(&test_data, &config).unwrap();
-        println!("Bytes Default format: {}", result);
+        assert_eq!(result, r#"{"data":[1,2,3,255]}"#);
     }
 
     #[test]
@@ -180,7 +180,7 @@ mod tests {
 
         let config = Config::default().set_bytes_hex().disable_hex_prefix();
         let result = to_string(&test_data, &config).unwrap();
-        println!("Bytes Hex format (no prefix): {}", result);
+        assert_eq!(result, r#"{"data":"010203ff"}"#);
     }
 
     #[test]
@@ -197,7 +197,7 @@ mod tests {
 
         let config = Config::default().set_bytes_hex().enable_hex_prefix();
         let result = to_string(&test_data, &config).unwrap();
-        println!("Bytes Hex format (with 0x prefix): {}", result);
+        assert_eq!(result, r#"{"data":"0x010203ff"}"#);
     }
 
     #[test]
@@ -214,7 +214,7 @@ mod tests {
 
         let config = Config::default().set_bytes_base64();
         let result = to_string(&test_data, &config).unwrap();
-        println!("Bytes Base64 format: {}", result);
+        assert_eq!(result, r#"{"data":"AQID/w=="}"#);
     }
 
     #[test]
@@ -231,7 +231,7 @@ mod tests {
 
         let config = Config::default().set_bytes_base64_url_safe();
         let result = to_string(&test_data, &config).unwrap();
-        println!("Bytes Base64 URL-safe format: {}", result);
+        assert_eq!(result, r#"{"data":"AQID_w=="}"#);
     }
 
     #[test]
@@ -244,30 +244,25 @@ mod tests {
 
         let test_data = TestStruct { data: vec![] };
 
-        println!("\n=== Testing empty bytes ===");
-
         let config_default = Config::default().set_bytes_default();
         let result_default = to_string(&test_data, &config_default).unwrap();
-        println!("Empty bytes Default format: {}", result_default);
+        assert_eq!(result_default, r#"{"data":[]}"#);
 
         let config_hex = Config::default().set_bytes_hex().disable_hex_prefix();
         let result_hex = to_string(&test_data, &config_hex).unwrap();
-        println!("Empty bytes Hex format (no prefix): {}", result_hex);
+        assert_eq!(result_hex, r#"{"data":""}"#);
 
         let config_hex_prefix = Config::default().set_bytes_hex().enable_hex_prefix();
         let result_hex_prefix = to_string(&test_data, &config_hex_prefix).unwrap();
-        println!(
-            "Empty bytes Hex format (with prefix): {}",
-            result_hex_prefix
-        );
+        assert_eq!(result_hex_prefix, r#"{"data":"0x"}"#);
 
         let config_base64 = Config::default().set_bytes_base64();
         let result_base64 = to_string(&test_data, &config_base64).unwrap();
-        println!("Empty bytes Base64 format: {}", result_base64);
+        assert_eq!(result_base64, r#"{"data":""}"#);
 
         let config_base64_url = Config::default().set_bytes_base64_url_safe();
         let result_base64_url = to_string(&test_data, &config_base64_url).unwrap();
-        println!("Empty bytes Base64 URL-safe format: {}", result_base64_url);
+        assert_eq!(result_base64_url, r#"{"data":""}"#);
     }
 
     #[test]
@@ -280,29 +275,21 @@ mod tests {
 
         let test_data = TestStruct { data: vec![0u8] };
 
-        println!("\n=== Testing single byte (0) ===");
-
         let config_default = Config::default().set_bytes_default();
         let result_default = to_string(&test_data, &config_default).unwrap();
-        println!("Single byte (0) Default format: {}", result_default);
+        assert_eq!(result_default, r#"{"data":[0]}"#);
 
         let config_hex_no_prefix = Config::default().set_bytes_hex().disable_hex_prefix();
         let result_hex_no_prefix = to_string(&test_data, &config_hex_no_prefix).unwrap();
-        println!(
-            "Single byte (0) Hex format (no prefix): {}",
-            result_hex_no_prefix
-        );
+        assert_eq!(result_hex_no_prefix, r#"{"data":"00"}"#);
 
         let config_hex_prefix = Config::default().set_bytes_hex().enable_hex_prefix();
         let result_hex_prefix = to_string(&test_data, &config_hex_prefix).unwrap();
-        println!(
-            "Single byte (0) Hex format (with prefix): {}",
-            result_hex_prefix
-        );
+        assert_eq!(result_hex_prefix, r#"{"data":"0x00"}"#);
 
         let config_base64 = Config::default().set_bytes_base64();
         let result_base64 = to_string(&test_data, &config_base64).unwrap();
-        println!("Single byte (0) Base64 format: {}", result_base64);
+        assert_eq!(result_base64, r#"{"data":"AA=="}"#);
     }
 
     #[test]
@@ -317,30 +304,23 @@ mod tests {
             data: (0u8..=255u8).collect(),
         };
 
-        println!("\n=== Testing large bytes (0-255) ===");
-
         let config_default = Config::default().set_bytes_default();
         let result_default = to_string(&test_data, &config_default).unwrap();
-        println!(
-            "Large bytes Default format length: {}",
-            result_default.len()
-        );
-        println!(
-            "Large bytes Default format (first 100 chars): {}",
-            &result_default[..result_default.len().min(100)]
-        );
+        assert!(result_default.starts_with(r#"{"data":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33"#));
+        assert!(result_default.ends_with(r#",255]}"#));
+        assert_eq!(result_default.len(), 924);
 
         let config_hex = Config::default().set_bytes_hex().enable_hex_prefix();
         let result_hex = to_string(&test_data, &config_hex).unwrap();
-        println!("Large bytes Hex format (with prefix): {}", result_hex);
+        assert_eq!(result_hex, r#"{"data":"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff"}"#);
 
         let config_base64 = Config::default().set_bytes_base64();
         let result_base64 = to_string(&test_data, &config_base64).unwrap();
-        println!("Large bytes Base64 format: {}", result_base64);
+        assert_eq!(result_base64, r#"{"data":"AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w=="}"#);
 
         let config_base64_url = Config::default().set_bytes_base64_url_safe();
         let result_base64_url = to_string(&test_data, &config_base64_url).unwrap();
-        println!("Large bytes Base64 URL-safe format: {}", result_base64_url);
+        assert_eq!(result_base64_url, r#"{"data":"AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0-P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn-AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq-wsbKztLW2t7i5uru8vb6_wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t_g4eLj5OXm5-jp6uvs7e7v8PHy8_T19vf4-fr7_P3-_w=="}"#);
     }
 
     #[test]
@@ -357,19 +337,17 @@ mod tests {
             name: "test".to_string(),
         };
 
-        println!("\n=== Testing bytes in struct ===");
-
         let config_default = Config::default().set_bytes_default();
         let result_default = to_string(&test_data, &config_default).unwrap();
-        println!("Struct with bytes Default format: {}", result_default);
+        assert_eq!(result_default, r#"{"data":[72,101,108,108,111],"name":"test"}"#);
 
         let config_hex = Config::default().set_bytes_hex().enable_hex_prefix();
         let result_hex = to_string(&test_data, &config_hex).unwrap();
-        println!("Struct with bytes Hex format (with prefix): {}", result_hex);
+        assert_eq!(result_hex, r#"{"data":"0x48656c6c6f","name":"test"}"#);
 
         let config_base64 = Config::default().set_bytes_base64();
         let result_base64 = to_string(&test_data, &config_base64).unwrap();
-        println!("Struct with bytes Base64 format: {}", result_base64);
+        assert_eq!(result_base64, r#"{"data":"SGVsbG8=","name":"test"}"#);
     }
 
     #[test]
@@ -394,34 +372,30 @@ mod tests {
             bytes: vec![4, 5, 6],
         };
 
-        println!("\n=== Testing bytes in nested structure ===");
-
         let config_default = Config::default().set_bytes_default();
         let result_default = to_string(&data, &config_default).unwrap();
-        println!("Nested structure Default format: {}", result_default);
+        assert_eq!(result_default, r#"{"nested":{"inner":[1,2,3]},"bytes":[4,5,6]}"#);
 
         let config_hex = Config::default().set_bytes_hex().enable_hex_prefix();
         let result_hex = to_string(&data, &config_hex).unwrap();
-        println!("Nested structure Hex format (with prefix): {}", result_hex);
+        assert_eq!(result_hex, r#"{"nested":{"inner":"0x010203"},"bytes":"0x040506"}"#);
 
         let config_base64 = Config::default().set_bytes_base64();
         let result_base64 = to_string(&data, &config_base64).unwrap();
-        println!("Nested structure Base64 format: {}", result_base64);
+        assert_eq!(result_base64, r#"{"nested":{"inner":"AQID"},"bytes":"BAUG"}"#);
     }
 
     #[test]
     fn test_to_string_bytes_special_values() {
         let test_cases = vec![
-            (vec![0u8], "zero byte"),
-            (vec![255u8], "max byte"),
-            (vec![0u8, 255u8], "zero and max"),
-            (vec![0x00, 0xFF, 0x7F, 0x80], "boundary values"),
-            (vec![0x01, 0x02, 0x03, 0x04, 0x05], "sequential bytes"),
+            (vec![0u8], r#"{"data":[0]}"#, r#"{"data":"00"}"#, r#"{"data":"0x00"}"#, r#"{"data":"AA=="}"#, r#"{"data":"AA=="}"#),
+            (vec![255u8], r#"{"data":[255]}"#, r#"{"data":"ff"}"#, r#"{"data":"0xff"}"#, r#"{"data":"/w=="}"#, r#"{"data":"_w=="}"#),
+            (vec![0u8, 255u8], r#"{"data":[0,255]}"#, r#"{"data":"00ff"}"#, r#"{"data":"0x00ff"}"#, r#"{"data":"AP8="}"#, r#"{"data":"AP8="}"#),
+            (vec![0x00, 0xFF, 0x7F, 0x80], r#"{"data":[0,255,127,128]}"#, r#"{"data":"00ff7f80"}"#, r#"{"data":"0x00ff7f80"}"#, r#"{"data":"AP9/gA=="}"#, r#"{"data":"AP9_gA=="}"#),
+            (vec![0x01, 0x02, 0x03, 0x04, 0x05], r#"{"data":[1,2,3,4,5]}"#, r#"{"data":"0102030405"}"#, r#"{"data":"0x0102030405"}"#, r#"{"data":"AQIDBAU="}"#, r#"{"data":"AQIDBAU="}"#),
         ];
 
-        println!("\n=== Testing special byte values ===");
-
-        for (bytes, description) in test_cases {
+        for (bytes, expected_default, expected_hex_no_prefix, expected_hex_prefix, expected_base64, expected_base64_url) in test_cases {
             #[derive(serde::Serialize)]
             struct TestStruct {
                 #[serde(with = "serde_bytes")]
@@ -430,27 +404,25 @@ mod tests {
 
             let test_data = TestStruct { data: bytes };
 
-            println!("\n--- Testing: {} ---", description);
-
             let config_default = Config::default().set_bytes_default();
             let result_default = to_string(&test_data, &config_default).unwrap();
-            println!("Default: {}", result_default);
+            assert_eq!(result_default, expected_default);
 
             let config_hex_no_prefix = Config::default().set_bytes_hex().disable_hex_prefix();
             let result_hex_no_prefix = to_string(&test_data, &config_hex_no_prefix).unwrap();
-            println!("Hex (no prefix): {}", result_hex_no_prefix);
+            assert_eq!(result_hex_no_prefix, expected_hex_no_prefix);
 
             let config_hex_prefix = Config::default().set_bytes_hex().enable_hex_prefix();
             let result_hex_prefix = to_string(&test_data, &config_hex_prefix).unwrap();
-            println!("Hex (with prefix): {}", result_hex_prefix);
+            assert_eq!(result_hex_prefix, expected_hex_prefix);
 
             let config_base64 = Config::default().set_bytes_base64();
             let result_base64 = to_string(&test_data, &config_base64).unwrap();
-            println!("Base64: {}", result_base64);
+            assert_eq!(result_base64, expected_base64);
 
             let config_base64_url = Config::default().set_bytes_base64_url_safe();
             let result_base64_url = to_string(&test_data, &config_base64_url).unwrap();
-            println!("Base64 URL-safe: {}", result_base64_url);
+            assert_eq!(result_base64_url, expected_base64_url);
         }
     }
 
@@ -466,29 +438,25 @@ mod tests {
             data: vec![0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0],
         };
 
-        println!(
-            "\n=== Testing all formats with same bytes: [0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0] ==="
-        );
-
         let config_default = Config::default().set_bytes_default();
         let result_default = to_string(&test_data, &config_default).unwrap();
-        println!("Default: {}", result_default);
+        assert_eq!(result_default, r#"{"data":[18,52,86,120,154,188,222,240]}"#);
 
         let config_hex_no_prefix = Config::default().set_bytes_hex().disable_hex_prefix();
         let result_hex_no_prefix = to_string(&test_data, &config_hex_no_prefix).unwrap();
-        println!("Hex (no prefix): {}", result_hex_no_prefix);
+        assert_eq!(result_hex_no_prefix, r#"{"data":"123456789abcdef0"}"#);
 
         let config_hex_prefix = Config::default().set_bytes_hex().enable_hex_prefix();
         let result_hex_prefix = to_string(&test_data, &config_hex_prefix).unwrap();
-        println!("Hex (with prefix): {}", result_hex_prefix);
+        assert_eq!(result_hex_prefix, r#"{"data":"0x123456789abcdef0"}"#);
 
         let config_base64 = Config::default().set_bytes_base64();
         let result_base64 = to_string(&test_data, &config_base64).unwrap();
-        println!("Base64: {}", result_base64);
+        assert_eq!(result_base64, r#"{"data":"EjRWeJq83vA="}"#);
 
         let config_base64_url = Config::default().set_bytes_base64_url_safe();
         let result_base64_url = to_string(&test_data, &config_base64_url).unwrap();
-        println!("Base64 URL-safe: {}", result_base64_url);
+        assert_eq!(result_base64_url, r#"{"data":"EjRWeJq83vA="}"#);
     }
 
     #[test]
@@ -508,14 +476,12 @@ mod tests {
             name: "test".to_string(),
         };
 
-        println!("\n=== Testing multiple bytes fields ===");
-
         let config_hex = Config::default().set_bytes_hex().enable_hex_prefix();
         let result_hex = to_string(&test_data, &config_hex).unwrap();
-        println!("Multiple bytes fields Hex format: {}", result_hex);
+        assert_eq!(result_hex, r#"{"field1":"0x010203","field2":"0x040506","name":"test"}"#);
 
         let config_base64 = Config::default().set_bytes_base64();
         let result_base64 = to_string(&test_data, &config_base64).unwrap();
-        println!("Multiple bytes fields Base64 format: {}", result_base64);
+        assert_eq!(result_base64, r#"{"field1":"AQID","field2":"BAUG","name":"test"}"#);
     }
 }
