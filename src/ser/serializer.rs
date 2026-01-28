@@ -108,8 +108,6 @@ where
     }
 
     fn serialize_bytes(self, v: &[u8]) -> Result<Self::Ok, Self::Error> {
-        println!("serialize bytes");
-
         match self.config.bytes_format {
             BytesFormat::Default => self.inner.serialize_bytes(v),
             BytesFormat::Hex => {
