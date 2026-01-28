@@ -2,6 +2,7 @@
 
 use crate::Config;
 use crate::formatter::{CompactFormatter, PrettyFormatter};
+use crate::ser::value::Serializer;
 use std::io::Write;
 
 /// Serializes a value to a JSON string with the given configuration.
@@ -124,6 +125,24 @@ where
     let formatter = PrettyFormatter::with_config(config);
     let mut serializer = serde_json::Serializer::with_formatter(writer, formatter);
     value.serialize(&mut serializer)
+}
+
+/// Serializes a value to a `serde_json::Value` with the given configuration.
+///
+/// # Example
+///
+/// ```
+/// use serde_json_helper::{to_value, Config};
+///
+/// let config = Config::default().set_bytes_hex().enable_hex_prefix();
+/// let value = to_value(&vec![1u8, 2u8, 3u8], &config).unwrap();
+/// ```
+pub fn to_value<T>(value: &T, config: &Config) -> serde_json::Result<serde_json::Value>
+where
+    T: ?Sized + serde::Serialize,
+{
+    let serializer = Serializer::with_config(config);
+    value.serialize(serializer)
 }
 
 #[cfg(test)]
