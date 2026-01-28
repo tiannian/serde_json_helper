@@ -1,8 +1,10 @@
 // Serialization functions with configuration
 
+use serde_json::ser::{CompactFormatter, PrettyFormatter};
+
 use crate::Config;
-use crate::formatter::{CompactFormatter, PrettyFormatter};
-use crate::ser::value::Serializer;
+// use crate::formatter::{CompactFormatter, PrettyFormatter};
+use crate::ser::serializer::Serializer;
 use std::io::Write;
 
 /// Serializes a value to a JSON string with the given configuration.
@@ -101,9 +103,10 @@ where
     W: ?Sized + Write,
     T: ?Sized + serde::Serialize,
 {
-    let formatter = CompactFormatter::with_config(config);
-    let mut serializer = serde_json::Serializer::with_formatter(writer, formatter);
-    value.serialize(&mut serializer)
+    let formatter = CompactFormatter;
+    let mut ser = serde_json::Serializer::with_formatter(writer, formatter);
+    let serializer = Serializer::new(&mut ser, config);
+    value.serialize(serializer)
 }
 
 /// Serializes a value to a pretty-printed JSON writer with the given configuration.
@@ -122,9 +125,10 @@ where
     W: ?Sized + Write,
     T: ?Sized + serde::Serialize,
 {
-    let formatter = PrettyFormatter::with_config(config);
-    let mut serializer = serde_json::Serializer::with_formatter(writer, formatter);
-    value.serialize(&mut serializer)
+    let formatter = PrettyFormatter::new();
+    let mut ser = serde_json::Serializer::with_formatter(writer, formatter);
+    let serializer = Serializer::new(&mut ser, config);
+    value.serialize(serializer)
 }
 
 /// Serializes a value to a `serde_json::Value` with the given configuration.
@@ -141,7 +145,9 @@ pub fn to_value<T>(value: &T, config: &Config) -> serde_json::Result<serde_json:
 where
     T: ?Sized + serde::Serialize,
 {
-    let serializer = Serializer::with_config(config);
+    let ser = serde_json::value::Serializer;
+
+    let serializer = Serializer::new(ser, config);
     value.serialize(serializer)
 }
 
@@ -553,5 +559,22 @@ mod tests {
             result_base64,
             r#"{"field1":"AQID","field2":"BAUG","name":"test"}"#
         );
+    }
+
+    #[test]
+    fn test_to_value_bytes_default() {
+        #[derive(serde::Serialize)]
+        struct TestStruct {
+            #[serde(with = "serde_bytes")]
+            data: Vec<u8>,
+        }
+
+        let test_data = TestStruct {
+            data: vec![1, 2, 3],
+        };
+        let config = Config::default().set_bytes_hex().enable_hex_prefix();
+
+        let value = to_value(&test_data, &config).unwrap();
+        println!("to_value bytes default: {:?}", value);
     }
 }

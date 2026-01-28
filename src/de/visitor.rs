@@ -1,11 +1,17 @@
 use serde::de::{EnumAccess, MapAccess, SeqAccess, Visitor};
 use std::fmt;
 
-pub struct WrapVisitor<V> {
+use crate::{
+    Config,
+    de::{enum_access::WrapEnumAccess, map_access::WrapMapAccess, seq_access::WrapSeqAccess},
+};
+
+pub struct WrapVisitor<'a, V> {
     pub visitor: V,
+    pub config: &'a Config,
 }
 
-impl<'de, V> Visitor<'de> for WrapVisitor<V>
+impl<'de, V> Visitor<'de> for WrapVisitor<'de, V>
 where
     V: Visitor<'de>,
 {
@@ -187,20 +193,29 @@ where
     where
         A: SeqAccess<'de>,
     {
-        self.visitor.visit_seq(seq)
+        self.visitor.visit_seq(WrapSeqAccess {
+            inner: seq,
+            config: self.config,
+        })
     }
 
     fn visit_map<A>(self, map: A) -> Result<Self::Value, A::Error>
     where
         A: MapAccess<'de>,
     {
-        self.visitor.visit_map(map)
+        self.visitor.visit_map(WrapMapAccess {
+            inner: map,
+            config: self.config,
+        })
     }
 
     fn visit_enum<A>(self, data: A) -> Result<Self::Value, A::Error>
     where
         A: EnumAccess<'de>,
     {
-        self.visitor.visit_enum(data)
+        self.visitor.visit_enum(WrapEnumAccess {
+            inner: data,
+            config: self.config,
+        })
     }
 }

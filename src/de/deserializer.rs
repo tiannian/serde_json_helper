@@ -2,30 +2,29 @@
 
 use crate::Config;
 use serde::de::Visitor;
-use serde_json::de::Read;
 
 use super::{WrapVisitor, bytes};
 
 /// A wrapper around `serde_json::Deserializer` that implements `Deserializer<'de>`
-pub struct Deserializer<'a, R> {
+pub struct Deserializer<'a, D> {
     /// The internal `serde_json::Deserializer`
-    pub inner: serde_json::de::Deserializer<R>,
+    pub inner: D,
     /// Configuration for deserialization
     pub config: &'a Config,
 }
 
-impl<'a, R> Deserializer<'a, R> {
+impl<'a, D> Deserializer<'a, D> {
     /// Creates a new `Deserializer` from an internal `serde_json::Deserializer` with custom config
-    pub fn with_config(inner: serde_json::de::Deserializer<R>, config: &'a Config) -> Self {
+    pub fn with_config(inner: D, config: &'a Config) -> Self {
         Deserializer { inner, config }
     }
 }
 
-impl<'de, R> serde::de::Deserializer<'de> for &mut Deserializer<'de, R>
+impl<'de, D> serde::de::Deserializer<'de> for Deserializer<'de, D>
 where
-    R: Read<'de>,
+    D: serde::de::Deserializer<'de>,
 {
-    type Error = serde_json::Error;
+    type Error = D::Error;
 
     fn deserialize_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
@@ -150,14 +149,15 @@ where
     where
         V: Visitor<'de>,
     {
-        bytes::de_bytes(&mut self.inner, &self.config, visitor)
+        bytes::de_bytes(self.inner, self.config, visitor)
     }
 
     fn deserialize_byte_buf<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: Visitor<'de>,
     {
-        self.inner.deserialize_byte_buf(visitor)
+        // self.inner.deserialize_byte_buf(visitor)
+        bytes::de_bytes(self.inner, self.config, visitor)
     }
 
     fn deserialize_option<V>(self, visitor: V) -> Result<V::Value, Self::Error>
@@ -200,14 +200,23 @@ where
     where
         V: Visitor<'de>,
     {
-        self.inner.deserialize_seq(WrapVisitor { visitor })
+        self.inner.deserialize_seq(WrapVisitor {
+            visitor,
+            config: self.config,
+        })
     }
 
     fn deserialize_tuple<V>(self, len: usize, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: Visitor<'de>,
     {
-        self.inner.deserialize_tuple(len, WrapVisitor { visitor })
+        self.inner.deserialize_tuple(
+            len,
+            WrapVisitor {
+                visitor,
+                config: self.config,
+            },
+        )
     }
 
     fn deserialize_tuple_struct<V>(
@@ -219,15 +228,24 @@ where
     where
         V: Visitor<'de>,
     {
-        self.inner
-            .deserialize_tuple_struct(name, len, WrapVisitor { visitor })
+        self.inner.deserialize_tuple_struct(
+            name,
+            len,
+            WrapVisitor {
+                visitor,
+                config: self.config,
+            },
+        )
     }
 
     fn deserialize_map<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: Visitor<'de>,
     {
-        self.inner.deserialize_map(WrapVisitor { visitor })
+        self.inner.deserialize_map(WrapVisitor {
+            visitor,
+            config: self.config,
+        })
     }
 
     fn deserialize_struct<V>(
@@ -239,8 +257,14 @@ where
     where
         V: Visitor<'de>,
     {
-        self.inner
-            .deserialize_struct(name, fields, WrapVisitor { visitor })
+        self.inner.deserialize_struct(
+            name,
+            fields,
+            WrapVisitor {
+                visitor,
+                config: self.config,
+            },
+        )
     }
 
     fn deserialize_identifier<V>(self, visitor: V) -> Result<V::Value, Self::Error>
@@ -266,7 +290,13 @@ where
     where
         V: Visitor<'de>,
     {
-        self.inner
-            .deserialize_enum(name, variants, WrapVisitor { visitor })
+        self.inner.deserialize_enum(
+            name,
+            variants,
+            WrapVisitor {
+                visitor,
+                config: self.config,
+            },
+        )
     }
 }

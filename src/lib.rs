@@ -3,7 +3,7 @@
 mod config;
 pub use config::*;
 
-pub(crate) mod formatter;
+// pub(crate) mod formatter;
 
 pub(crate) mod ser;
 pub use ser::to::*;
