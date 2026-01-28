@@ -1,7 +1,7 @@
 use serde::Deserialize;
 use serde_json::{Result, de::Read};
 
-use crate::{Config, de::Deserializer};
+use crate::{Config, de::{Deserializer, value::Value}};
 
 fn from_trait<'de, R, T>(read: R, config: &'de Config) -> Result<T>
 where
@@ -39,4 +39,12 @@ where
     T: Deserialize<'a>,
 {
     from_trait(serde_json::de::StrRead::new(s), config)
+}
+
+pub fn from_value<'a, T>(value: serde_json::Value, config: &'a Config) -> Result<T>
+where
+    T: Deserialize<'a>,
+{
+    let de = Value::with_config(value, config);
+    T::deserialize(de)
 }
