@@ -312,15 +312,24 @@ mod tests {
 
         let config_hex = Config::default().set_bytes_hex().enable_hex_prefix();
         let result_hex = to_string(&test_data, &config_hex).unwrap();
-        assert_eq!(result_hex, r#"{"data":"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff"}"#);
+        assert_eq!(
+            result_hex,
+            r#"{"data":"0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff"}"#
+        );
 
         let config_base64 = Config::default().set_bytes_base64();
         let result_base64 = to_string(&test_data, &config_base64).unwrap();
-        assert_eq!(result_base64, r#"{"data":"AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w=="}"#);
+        assert_eq!(
+            result_base64,
+            r#"{"data":"AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w=="}"#
+        );
 
         let config_base64_url = Config::default().set_bytes_base64_url_safe();
         let result_base64_url = to_string(&test_data, &config_base64_url).unwrap();
-        assert_eq!(result_base64_url, r#"{"data":"AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0-P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn-AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq-wsbKztLW2t7i5uru8vb6_wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t_g4eLj5OXm5-jp6uvs7e7v8PHy8_T19vf4-fr7_P3-_w=="}"#);
+        assert_eq!(
+            result_base64_url,
+            r#"{"data":"AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0-P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn-AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq-wsbKztLW2t7i5uru8vb6_wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t_g4eLj5OXm5-jp6uvs7e7v8PHy8_T19vf4-fr7_P3-_w=="}"#
+        );
     }
 
     #[test]
@@ -339,7 +348,10 @@ mod tests {
 
         let config_default = Config::default().set_bytes_default();
         let result_default = to_string(&test_data, &config_default).unwrap();
-        assert_eq!(result_default, r#"{"data":[72,101,108,108,111],"name":"test"}"#);
+        assert_eq!(
+            result_default,
+            r#"{"data":[72,101,108,108,111],"name":"test"}"#
+        );
 
         let config_hex = Config::default().set_bytes_hex().enable_hex_prefix();
         let result_hex = to_string(&test_data, &config_hex).unwrap();
@@ -374,28 +386,80 @@ mod tests {
 
         let config_default = Config::default().set_bytes_default();
         let result_default = to_string(&data, &config_default).unwrap();
-        assert_eq!(result_default, r#"{"nested":{"inner":[1,2,3]},"bytes":[4,5,6]}"#);
+        assert_eq!(
+            result_default,
+            r#"{"nested":{"inner":[1,2,3]},"bytes":[4,5,6]}"#
+        );
 
         let config_hex = Config::default().set_bytes_hex().enable_hex_prefix();
         let result_hex = to_string(&data, &config_hex).unwrap();
-        assert_eq!(result_hex, r#"{"nested":{"inner":"0x010203"},"bytes":"0x040506"}"#);
+        assert_eq!(
+            result_hex,
+            r#"{"nested":{"inner":"0x010203"},"bytes":"0x040506"}"#
+        );
 
         let config_base64 = Config::default().set_bytes_base64();
         let result_base64 = to_string(&data, &config_base64).unwrap();
-        assert_eq!(result_base64, r#"{"nested":{"inner":"AQID"},"bytes":"BAUG"}"#);
+        assert_eq!(
+            result_base64,
+            r#"{"nested":{"inner":"AQID"},"bytes":"BAUG"}"#
+        );
     }
 
     #[test]
     fn test_to_string_bytes_special_values() {
         let test_cases = vec![
-            (vec![0u8], r#"{"data":[0]}"#, r#"{"data":"00"}"#, r#"{"data":"0x00"}"#, r#"{"data":"AA=="}"#, r#"{"data":"AA=="}"#),
-            (vec![255u8], r#"{"data":[255]}"#, r#"{"data":"ff"}"#, r#"{"data":"0xff"}"#, r#"{"data":"/w=="}"#, r#"{"data":"_w=="}"#),
-            (vec![0u8, 255u8], r#"{"data":[0,255]}"#, r#"{"data":"00ff"}"#, r#"{"data":"0x00ff"}"#, r#"{"data":"AP8="}"#, r#"{"data":"AP8="}"#),
-            (vec![0x00, 0xFF, 0x7F, 0x80], r#"{"data":[0,255,127,128]}"#, r#"{"data":"00ff7f80"}"#, r#"{"data":"0x00ff7f80"}"#, r#"{"data":"AP9/gA=="}"#, r#"{"data":"AP9_gA=="}"#),
-            (vec![0x01, 0x02, 0x03, 0x04, 0x05], r#"{"data":[1,2,3,4,5]}"#, r#"{"data":"0102030405"}"#, r#"{"data":"0x0102030405"}"#, r#"{"data":"AQIDBAU="}"#, r#"{"data":"AQIDBAU="}"#),
+            (
+                vec![0u8],
+                r#"{"data":[0]}"#,
+                r#"{"data":"00"}"#,
+                r#"{"data":"0x00"}"#,
+                r#"{"data":"AA=="}"#,
+                r#"{"data":"AA=="}"#,
+            ),
+            (
+                vec![255u8],
+                r#"{"data":[255]}"#,
+                r#"{"data":"ff"}"#,
+                r#"{"data":"0xff"}"#,
+                r#"{"data":"/w=="}"#,
+                r#"{"data":"_w=="}"#,
+            ),
+            (
+                vec![0u8, 255u8],
+                r#"{"data":[0,255]}"#,
+                r#"{"data":"00ff"}"#,
+                r#"{"data":"0x00ff"}"#,
+                r#"{"data":"AP8="}"#,
+                r#"{"data":"AP8="}"#,
+            ),
+            (
+                vec![0x00, 0xFF, 0x7F, 0x80],
+                r#"{"data":[0,255,127,128]}"#,
+                r#"{"data":"00ff7f80"}"#,
+                r#"{"data":"0x00ff7f80"}"#,
+                r#"{"data":"AP9/gA=="}"#,
+                r#"{"data":"AP9_gA=="}"#,
+            ),
+            (
+                vec![0x01, 0x02, 0x03, 0x04, 0x05],
+                r#"{"data":[1,2,3,4,5]}"#,
+                r#"{"data":"0102030405"}"#,
+                r#"{"data":"0x0102030405"}"#,
+                r#"{"data":"AQIDBAU="}"#,
+                r#"{"data":"AQIDBAU="}"#,
+            ),
         ];
 
-        for (bytes, expected_default, expected_hex_no_prefix, expected_hex_prefix, expected_base64, expected_base64_url) in test_cases {
+        for (
+            bytes,
+            expected_default,
+            expected_hex_no_prefix,
+            expected_hex_prefix,
+            expected_base64,
+            expected_base64_url,
+        ) in test_cases
+        {
             #[derive(serde::Serialize)]
             struct TestStruct {
                 #[serde(with = "serde_bytes")]
@@ -478,10 +542,16 @@ mod tests {
 
         let config_hex = Config::default().set_bytes_hex().enable_hex_prefix();
         let result_hex = to_string(&test_data, &config_hex).unwrap();
-        assert_eq!(result_hex, r#"{"field1":"0x010203","field2":"0x040506","name":"test"}"#);
+        assert_eq!(
+            result_hex,
+            r#"{"field1":"0x010203","field2":"0x040506","name":"test"}"#
+        );
 
         let config_base64 = Config::default().set_bytes_base64();
         let result_base64 = to_string(&test_data, &config_base64).unwrap();
-        assert_eq!(result_base64, r#"{"field1":"AQID","field2":"BAUG","name":"test"}"#);
+        assert_eq!(
+            result_base64,
+            r#"{"field1":"AQID","field2":"BAUG","name":"test"}"#
+        );
     }
 }

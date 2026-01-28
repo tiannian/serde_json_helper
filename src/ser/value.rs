@@ -25,11 +25,14 @@ impl<'a> serde::Serializer for Serializer<'a> {
     type Error = serde_json::Error;
     type SerializeSeq = <serde_json::value::Serializer as serde::Serializer>::SerializeSeq;
     type SerializeTuple = <serde_json::value::Serializer as serde::Serializer>::SerializeTuple;
-    type SerializeTupleStruct = <serde_json::value::Serializer as serde::Serializer>::SerializeTupleStruct;
-    type SerializeTupleVariant = <serde_json::value::Serializer as serde::Serializer>::SerializeTupleVariant;
+    type SerializeTupleStruct =
+        <serde_json::value::Serializer as serde::Serializer>::SerializeTupleStruct;
+    type SerializeTupleVariant =
+        <serde_json::value::Serializer as serde::Serializer>::SerializeTupleVariant;
     type SerializeMap = <serde_json::value::Serializer as serde::Serializer>::SerializeMap;
     type SerializeStruct = <serde_json::value::Serializer as serde::Serializer>::SerializeStruct;
-    type SerializeStructVariant = <serde_json::value::Serializer as serde::Serializer>::SerializeStructVariant;
+    type SerializeStructVariant =
+        <serde_json::value::Serializer as serde::Serializer>::SerializeStructVariant;
 
     fn serialize_bool(self, v: bool) -> Result<Self::Ok, Self::Error> {
         self.inner.serialize_bool(v)
@@ -95,7 +98,8 @@ impl<'a> serde::Serializer for Serializer<'a> {
         match self.config.bytes_format {
             BytesFormat::Default => {
                 // Serialize as array of numbers [1, 2, 3]
-                let array: Vec<serde_json::Value> = v.iter()
+                let array: Vec<serde_json::Value> = v
+                    .iter()
                     .map(|&b| serde_json::Value::Number(serde_json::Number::from(b as u64)))
                     .collect();
                 Ok(serde_json::Value::Array(array))
@@ -150,7 +154,8 @@ impl<'a> serde::Serializer for Serializer<'a> {
         variant_index: u32,
         variant: &'static str,
     ) -> Result<Self::Ok, Self::Error> {
-        self.inner.serialize_unit_variant(name, variant_index, variant)
+        self.inner
+            .serialize_unit_variant(name, variant_index, variant)
     }
 
     fn serialize_newtype_struct<T>(
@@ -174,7 +179,8 @@ impl<'a> serde::Serializer for Serializer<'a> {
     where
         T: ?Sized + serde::Serialize,
     {
-        self.inner.serialize_newtype_variant(name, variant_index, variant, value)
+        self.inner
+            .serialize_newtype_variant(name, variant_index, variant, value)
     }
 
     fn serialize_seq(self, len: Option<usize>) -> Result<Self::SerializeSeq, Self::Error> {
@@ -200,7 +206,8 @@ impl<'a> serde::Serializer for Serializer<'a> {
         variant: &'static str,
         len: usize,
     ) -> Result<Self::SerializeTupleVariant, Self::Error> {
-        self.inner.serialize_tuple_variant(name, variant_index, variant, len)
+        self.inner
+            .serialize_tuple_variant(name, variant_index, variant, len)
     }
 
     fn serialize_map(self, len: Option<usize>) -> Result<Self::SerializeMap, Self::Error> {
@@ -222,7 +229,8 @@ impl<'a> serde::Serializer for Serializer<'a> {
         variant: &'static str,
         len: usize,
     ) -> Result<Self::SerializeStructVariant, Self::Error> {
-        self.inner.serialize_struct_variant(name, variant_index, variant, len)
+        self.inner
+            .serialize_struct_variant(name, variant_index, variant, len)
     }
 
     fn collect_str<T>(self, value: &T) -> Result<Self::Ok, Self::Error>
