@@ -2,6 +2,8 @@
 name = "serde_json_ext"
 version = "0.1.0"
 edition = "2024"
+description = "A serde_json extension that provides configurable bytes serialization formats (hex, base64, default array)"
+license = "MIT"
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
